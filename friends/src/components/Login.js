@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const Login = () => {
     const [formInput, setFormInput] = useState({
-        username: '',
-        password: ''
+        credentials: {username: '',
+        password: ''}
     });
 
     const handleChanges = (e) => {
         setFormInput({
-            ...formInput,
+            ...formInput, 
+                credentials: {
+                    ...formInput.credentials,
             [e.target.name]: e.target.value
-        })
+        }
+    })
 
+    };
+
+    const login = (e) => {
+        e.preventDefault();
+        axios
+            .post('http://localhost:5000/api/login', formInput.credentials)
+            .then((res) => {
+                localStorage.setItem('token', res.data.payload);
+                props.history.push('/friendslist');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     };
 
     console.log(formInput)
@@ -23,7 +40,7 @@ const Login = () => {
             username:
                 <input id='username'
                 name='username'
-                value={formInput.name}
+                value={formInput.credentials.username}
                 onChange={handleChanges}></input>
             </label>
             <br/>
@@ -31,7 +48,7 @@ const Login = () => {
             password:
                 <input id='password'
                 name='password'
-                value={formInput.password}
+                value={formInput.credentials.password}
                 onChange={handleChanges}>
                 </input>
             </label>
